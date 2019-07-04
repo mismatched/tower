@@ -12,11 +12,17 @@ import (
 )
 
 func main() {
-	doping(os.Args[1])
+	if len(os.Args) > 2 {
+		doping(os.Args[1], os.Args[2])
+	}
 }
 
-func doping(url string) {
-	req, _ := http.NewRequest("GET", url, nil)
+func doping(url, method string) {
+	req, err := http.NewRequest(method, url, nil)
+	if err != nil {
+		fmt.Printf("%s", err)
+		os.Exit(0)
+	}
 
 	var start, connect, dns, tlsHandshake time.Time
 
