@@ -8,12 +8,16 @@ import (
 	"net/http"
 	"net/http/httptrace"
 	"os"
+	"strings"
 	"time"
 )
 
 func main() {
 	if len(os.Args) > 2 {
-		doping(os.Args[1], os.Args[2])
+		arg := getMethod(os.Args[2])
+		doping(os.Args[1], arg)
+	} else {
+		fmt.Printf("No parameter specified\n")
 	}
 }
 
@@ -53,4 +57,15 @@ func doping(url, method string) {
 		log.Fatal(err)
 	}
 	fmt.Printf("Total time: %v\n", time.Since(start))
+}
+
+func getMethod(arg string) string {
+	methods := []string{"GET", "HEAD", "POST", "PUT", "DELETE", "CONNECT", "OPTIONS", "TRACE"}
+	arg = strings.ToUpper(arg)
+	for _, m := range methods {
+		if m == arg {
+			return arg
+		}
+	}
+	return "GET"
 }
