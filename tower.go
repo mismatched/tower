@@ -1,4 +1,4 @@
-// doping
+// tower
 package main
 
 import (
@@ -35,13 +35,13 @@ methods:
 
 	if len(os.Args) > 2 {
 		arg := getMethod(os.Args[2])
-		doping(os.Args[1], arg)
+		tower(os.Args[1], arg)
 	} else {
 		fmt.Printf("No parameter specified\n")
 	}
 }
 
-func doping(url, method string) {
+func tower(url, method string) {
 	req, err := http.NewRequest(method, url, nil)
 	if err != nil {
 		fmt.Printf("%s", err)
