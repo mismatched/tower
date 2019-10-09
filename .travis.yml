@@ -1,0 +1,32 @@
+os:
+  - linux
+  - osx
+
+dist: xenial
+
+language: go
+
+env:
+  - GO111MODULE=on
+  - GOFLAGS='-mod vendor'
+
+sudo: true
+
+go:
+  - 1.12.x
+  - master
+
+git:
+  depth: 1
+
+install: true
+
+notifications:
+  email: false
+
+before_script:
+  - go install github.com/golangci/golangci-lint/cmd/golangci-lint
+
+script:
+  - golangci-lint run
+  - go test -v -race ./...
