@@ -16,6 +16,7 @@ const (
 )
 
 // Ping an address
+// It needs root privileges to listen icmp on 0.0.0.0
 func Ping(addr string, seq int) (*net.IPAddr, time.Duration, error) {
 	// listening for icmp replies
 	c, err := icmp.ListenPacket("ip4:icmp", "0.0.0.0")
