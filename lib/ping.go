@@ -27,6 +27,9 @@ func Ping(addr string, seq int) (*net.IPAddr, time.Duration, error) {
 
 	// Resolve DNS and get the real IP of the it
 	dst, err := DNSLookup(addr)
+	if err != nil {
+		return dst, 0, err
+	}
 
 	// Make a new ICMP message
 	msg := icmp.Message{

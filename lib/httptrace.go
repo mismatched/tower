@@ -7,8 +7,8 @@ import (
 	"time"
 )
 
-// HTTPResult type
-type HTTPResult struct {
+// HTTPTraceResult type
+type HTTPTraceResult struct {
 	URL                  string
 	Method               string
 	DNS                  time.Duration
@@ -18,9 +18,9 @@ type HTTPResult struct {
 	Total                time.Duration
 }
 
-// HTTP check
-func HTTP(url, method string) (HTTPResult, error) {
-	res := HTTPResult{URL: url, Method: method}
+// HTTPTrace check
+func HTTPTrace(url, method string) (HTTPTraceResult, error) {
+	res := HTTPTraceResult{URL: url, Method: method}
 
 	req, err := http.NewRequest(res.Method, res.URL, nil)
 	if err != nil {
