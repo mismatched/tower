@@ -3,7 +3,6 @@ package main
 
 import (
 	"crypto/tls"
-	"flag"
 	"fmt"
 	"log"
 	"net/http"
@@ -11,33 +10,23 @@ import (
 	"os"
 	"strings"
 	"time"
+
+	"github.com/urfave/cli"
 )
 
 func main() {
-	h := flag.Bool("help", false, "Help flag")
-	flag.Parse()
-	if *h {
-		message := `
-usage:
-
-doping [domain] [method]
-
-domain format:
-    http[s]://youdomain
-
-methods:
-    http standard methods.
-    ["GET", "HEAD", "POST", "PUT", "DELETE", "CONNECT", "OPTIONS", "TRACE"]
-`
-		fmt.Printf(message)
-		return
+	app := cli.NewApp()
+	app.Name = "tower"
+	app.Usage = "network uptime and status checker"
+	app.Version = "0.0.1"
+	app.Action = func(c *cli.Context) error {
+		tower(c.Args().Get(0), c.Args().Get(1))
+		return nil
 	}
 
-	if len(os.Args) > 2 {
-		arg := getMethod(os.Args[2])
-		tower(os.Args[1], arg)
-	} else {
-		fmt.Printf("No parameter specified\n")
+	err := app.Run(os.Args)
+	if err != nil {
+		log.Fatalln(err)
 	}
 }
 
