@@ -11,6 +11,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/dariubs/tower/lib"
+
 	"github.com/urfave/cli"
 )
 
@@ -19,15 +21,35 @@ func main() {
 	app.Name = "tower"
 	app.Usage = "network uptime and status checker"
 	app.Version = "0.0.1"
-	app.Action = func(c *cli.Context) error {
-		tower(c.Args().Get(0), c.Args().Get(1))
-		return nil
+	app.Flags = []cli.Flag{
+		cli.StringFlag{
+			Name:  "ping",
+			Usage: "ping a url. you must run it as root",
+		},
 	}
+	app.Action = ActionHandler
 
 	err := app.Run(os.Args)
 	if err != nil {
 		log.Fatalln(err)
 	}
+}
+
+// ActionHandler handle cli actions
+func ActionHandler(c *cli.Context) error {
+	if c.String("ping") != "" {
+		r, d, err := libtower.Ping(c.String("ping"), 1)
+		if err != nil {
+			fmt.Printf("Error: %v\n", err)
+			return err
+		}
+
+		fmt.Printf("Ping %s in %v ms\n", r, d)
+		return nil
+	}
+
+	tower(c.Args().Get(0), c.Args().Get(1))
+	return nil
 }
 
 func tower(url, method string) {
