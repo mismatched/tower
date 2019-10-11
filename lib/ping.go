@@ -26,7 +26,7 @@ func Ping(addr string, seq int) (*net.IPAddr, time.Duration, error) {
 	defer c.Close()
 
 	// Resolve DNS and get the real IP of the it
-	dst, err := DNSLookup(addr)
+	dst, _, err := DNSLookup(addr)
 	if err != nil {
 		return dst, 0, err
 	}

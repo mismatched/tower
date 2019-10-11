@@ -7,7 +7,7 @@ import (
 )
 
 func TestDNSLookup(t *testing.T) {
-	addr, err := DNSLookup("google.com")
+	addr, _, err := DNSLookup("google.com")
 	if err != nil {
 		t.Errorf("test failed %v", err)
 	}
