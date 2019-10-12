@@ -26,6 +26,10 @@ func main() {
 			Name:  "ping",
 			Usage: "ping a url. you must run it as root",
 		},
+		cli.StringFlag{
+			Name:  "dns",
+			Usage: "dns resolve time of an address",
+		},
 	}
 	app.Action = ActionHandler
 
@@ -45,6 +49,15 @@ func ActionHandler(c *cli.Context) error {
 		}
 
 		fmt.Printf("Ping %s in %v ms\n", r, d)
+		return nil
+	} else if c.String("dns") != "" {
+		r, d, err := libtower.DNSLookup(c.String("dns"))
+		if err != nil {
+			fmt.Printf("Error: %v\n", err)
+			return err
+		}
+
+		fmt.Printf("DNS of %s with %s ip resolves in %v ms\n", c.String("dns"), r, d)
 		return nil
 	}
 
