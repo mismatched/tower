@@ -1,7 +1,7 @@
 all: build
 
 build:
-	go build -o tower cmd/*
+	go build -o tower cmd/*.go
 
 test:
-	sudo go test -v -race ./...
+	sudo - E env "PATH=$PATH" go test -v -race ./...
