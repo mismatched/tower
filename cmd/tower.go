@@ -2,14 +2,10 @@
 package main
 
 import (
-	"crypto/tls"
 	"fmt"
 	"log"
-	"net/http"
-	"net/http/httptrace"
 	"os"
 	"strings"
-	"time"
 
 	"github.com/dariubs/tower/lib"
 
@@ -29,6 +25,10 @@ func main() {
 		cli.StringFlag{
 			Name:  "dns",
 			Usage: "dns resolve time of an address",
+		},
+		cli.StringFlag{
+			Name:  "trace",
+			Usage: "http trace time",
 		},
 	}
 	app.Action = ActionHandler
@@ -59,48 +59,35 @@ func ActionHandler(c *cli.Context) error {
 
 		fmt.Printf("DNS of %s with %s ip resolves in %v ms\n", c.String("dns"), r, d)
 		return nil
+	} else if c.String("trace") != "" {
+		// TODO: get http method from user
+		// TODO: use http:// schema if for urls with no schemas
+		r, err := libtower.HTTPTrace(c.String("trace"), "GET")
+		if err != nil {
+			fmt.Printf("Error: %v\n", err)
+			return err
+		}
+		if r.DNS != 0 {
+			fmt.Printf("DNS Done: %v\n", r.DNS)
+		}
+		if r.TLSHandshake != 0 {
+			fmt.Printf("TLS Handshake: %v\n", r.TLSHandshake)
+		}
+		if r.Connect != 0 {
+			fmt.Printf("Connect time: %v\n", r.Connect)
+		}
+		if r.GotFirstResponseByte != 0 {
+			fmt.Printf("Time from start to first byte: %v\n", r.GotFirstResponseByte)
+		}
+		if r.Total != 0 {
+			fmt.Printf("Total time: %v\n", r.Total)
+		}
+		return nil
+	} else {
+		fmt.Println("Command not found in Tower")
 	}
 
-	tower(c.Args().Get(0), c.Args().Get(1))
 	return nil
-}
-
-func tower(url, method string) {
-	req, err := http.NewRequest(method, url, nil)
-	if err != nil {
-		fmt.Printf("%s", err)
-		os.Exit(0)
-	}
-
-	var start, connect, dns, tlsHandshake time.Time
-
-	trace := &httptrace.ClientTrace{
-		DNSStart: func(dsi httptrace.DNSStartInfo) { dns = time.Now() },
-		DNSDone: func(ddi httptrace.DNSDoneInfo) {
-			fmt.Printf("DNS Done: %v\n", time.Since(dns))
-		},
-
-		TLSHandshakeStart: func() { tlsHandshake = time.Now() },
-		TLSHandshakeDone: func(cs tls.ConnectionState, err error) {
-			fmt.Printf("TLS Handshake: %v\n", time.Since(tlsHandshake))
-		},
-
-		ConnectStart: func(network, addr string) { connect = time.Now() },
-		ConnectDone: func(network, addr string, err error) {
-			fmt.Printf("Connect time: %v\n", time.Since(connect))
-		},
-
-		GotFirstResponseByte: func() {
-			fmt.Printf("Time from start to first byte: %v\n", time.Since(start))
-		},
-	}
-
-	req = req.WithContext(httptrace.WithClientTrace(req.Context(), trace))
-	start = time.Now()
-	if _, err := http.DefaultTransport.RoundTrip(req); err != nil {
-		log.Fatal(err)
-	}
-	fmt.Printf("Total time: %v\n", time.Since(start))
 }
 
 func getMethod(arg string) string {
