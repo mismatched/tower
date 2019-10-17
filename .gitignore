@@ -1,5 +1,4 @@
-doping
-tower
+bin/
 *.exe
 *.exe~
 *.dll

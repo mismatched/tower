@@ -7,7 +7,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/dariubs/tower/lib"
+	"github.com/dariubs/tower/libtower"
 
 	"github.com/urfave/cli"
 )
