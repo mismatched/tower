@@ -35,21 +35,22 @@ func HTTPStatus(url, method string) (HTTPStatusResult, error) {
 	// setup client
 	hsr := HTTPStatusResult{}
 	client := &http.Client{}
-	req, err := http.NewRequest("GET", "http://example.com", nil)
+	req, err := http.NewRequest(method, url, nil)
 	if err != nil {
 		return hsr, err
 	}
-
-	req.Header.Add("If-None-Match", `W/"wyzzy"`)
+	hsr.Start = time.Now()
 	resp, err := client.Do(req)
 	if err != nil {
 		return hsr, err
 	}
-
-	hsr.Start = time.Now()
-	hsr.StatusCode = resp.StatusCode
 	hsr.End = time.Now()
+	
 	hsr.Duration = hsr.Start.Sub(hsr.End)
+	hsr.StatusCode = resp.StatusCode
+	// TODO : add response body
+	hsr.Status, hsr.Proto, hsr.ProtoMajor, hsr.ProtoMinor, hsr.Header, hsr.ContentLength, hsr.TransferEncoding, hsr.Close, hsr.Uncompressed, hsr.Trailer = 
+		resp.Status, resp.Proto, resp.ProtoMajor, resp.ProtoMinor, resp.Header, resp.ContentLength, resp.TransferEncoding, resp.Close, resp.Uncompressed, resp.Trailer
 
-	return hsr, nil
+	return hsr, err
 }
