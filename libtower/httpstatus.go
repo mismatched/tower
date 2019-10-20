@@ -5,6 +5,11 @@ import (
 	"time"
 )
 
+// HTTPClient type
+type HTTPClient struct {
+	Timeout time.Duration
+}
+
 // HTTPStatusResult type
 type HTTPStatusResult struct {
 	URL    string
@@ -31,7 +36,7 @@ type HTTPStatusResult struct {
 }
 
 // HTTPStatus check
-func HTTPStatus(url, method string) (HTTPStatusResult, error) {
+func (hc *HTTPClient) HTTPStatus(url, method string) (HTTPStatusResult, error) {
 	// setup client
 	hsr := HTTPStatusResult{}
 	client := &http.Client{}
@@ -45,11 +50,11 @@ func HTTPStatus(url, method string) (HTTPStatusResult, error) {
 		return hsr, err
 	}
 	hsr.End = time.Now()
-	
-	hsr.Duration = hsr.Start.Sub(hsr.End)
+
+	hsr.Duration = hsr.End.Sub(hsr.Start)
 	hsr.StatusCode = resp.StatusCode
 	// TODO : add response body
-	hsr.Status, hsr.Proto, hsr.ProtoMajor, hsr.ProtoMinor, hsr.Header, hsr.ContentLength, hsr.TransferEncoding, hsr.Close, hsr.Uncompressed, hsr.Trailer = 
+	hsr.Status, hsr.Proto, hsr.ProtoMajor, hsr.ProtoMinor, hsr.Header, hsr.ContentLength, hsr.TransferEncoding, hsr.Close, hsr.Uncompressed, hsr.Trailer =
 		resp.Status, resp.Proto, resp.ProtoMajor, resp.ProtoMinor, resp.Header, resp.ContentLength, resp.TransferEncoding, resp.Close, resp.Uncompressed, resp.Trailer
 
 	return hsr, err
