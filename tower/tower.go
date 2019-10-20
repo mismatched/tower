@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"github.com/dariubs/tower/libtower"
-
+	"github.com/dariubs/fmt2"
 	"github.com/urfave/cli"
 )
 
@@ -29,6 +29,10 @@ func main() {
 		cli.StringFlag{
 			Name:  "trace",
 			Usage: "http trace time",
+		},
+		cli.StringFlag{
+			Name: "http-status",
+			Usage: "http status time",
 		},
 	}
 	app.Action = ActionHandler
@@ -82,6 +86,15 @@ func ActionHandler(c *cli.Context) error {
 		if r.Total != 0 {
 			fmt.Printf("Total time: %v\n", r.Total)
 		}
+		return nil
+	} else if c.String("http-status") != "" {
+		client := libtower.HTTPClient{}
+		r, err := client.HTTPStatus(c.String("http-status"), "GET")
+		if err != nil {
+			fmt2.Printlnf("Error: %v\n", err)
+			return err
+		}
+		fmt2.Printlnf("%s with status %s code %d in %v", c.String("http-status"), r.Status, r.StatusCode, r.Duration)
 		return nil
 	} else {
 		fmt.Println("Command not found in Tower")
