@@ -7,8 +7,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/dariubs/tower/libtower"
 	"github.com/dariubs/fmt2"
+	"github.com/dariubs/tower/libtower"
 	"github.com/urfave/cli"
 )
 
@@ -17,9 +17,18 @@ func main() {
 	app.Name = "tower"
 	app.Usage = "network uptime and status checker"
 	app.Version = "0.0.1"
+	app.Authors = []cli.Author{
+		cli.Author{
+			Name:  "Dariush Abbasi",
+			Email: "poshtehani@gmail.com",
+		},
+		cli.Author{
+			Name: "Hasan Aminfar",
+		},
+	}
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
-			Name:  "ping",
+			Name:  "ping, p",
 			Usage: "ping a url. you must run it as root",
 		},
 		cli.StringFlag{
@@ -31,7 +40,7 @@ func main() {
 			Usage: "http trace time",
 		},
 		cli.StringFlag{
-			Name: "http-status",
+			Name:  "http-status, s",
 			Usage: "http status time",
 		},
 	}
