@@ -3,6 +3,7 @@ package libtower
 import (
 	"context"
 	"errors"
+	"fmt"
 	"net"
 	"net/http/httptrace"
 	"time"
@@ -34,11 +35,12 @@ func DNSLookup(addr string) (*net.IPAddr, time.Duration, error) {
 }
 
 //DNSLookupFrom func
-func DNSLookupFrom(addr string, sever string) (*net.IPAddr, time.Duration, error) {
-	severIP := net.ParseIP(sever)
+func DNSLookupFrom(addr string, server string) (*net.IPAddr, time.Duration, error) {
+	severIP := net.ParseIP(server)
 	if severIP == nil {
 		return new(net.IPAddr), time.Duration(0), errors.New("failed to parse server ip address")
 	}
+	serverAddress := server + ":53"
 
 	msg := dns.Msg{}
 	msg.Id = dns.Id()
@@ -46,9 +48,11 @@ func DNSLookupFrom(addr string, sever string) (*net.IPAddr, time.Duration, error
 	msg.Question = []dns.Question{dns.Question{Name: dns.Fqdn(addr), Qtype: dns.TypeA, Qclass: dns.ClassINET}}
 
 	client := dns.Client{Net: "udp"}
-	resp, rtt, err := client.Exchange(&msg, sever)
+	resp, rtt, err := client.Exchange(&msg, serverAddress)
 
-	if err == nil {
+	fmt.Println(resp, rtt, err)
+
+	if err != nil {
 		return new(net.IPAddr), rtt, errors.New("dns exchange error: " + err.Error())
 	}
 	if resp == nil {
