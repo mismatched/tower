@@ -23,7 +23,8 @@ func main() {
 			Email: "poshtehani@gmail.com",
 		},
 		cli.Author{
-			Name: "Hasan Aminfar",
+			Name:  "Hasan Aminfar",
+			Email: "aminfar69@gmail.com",
 		},
 	}
 	app.Flags = []cli.Flag{
