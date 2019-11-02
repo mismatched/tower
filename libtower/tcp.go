@@ -8,17 +8,20 @@ import (
 // TCPResult type
 type TCPResult struct {
 	Host    string
-	Port    int
+	Port    string
 	Timeout time.Duration
 
-	Start    time.Duration
-	End      time.Duration
+	Start    time.Time
+	End      time.Time
 	Duration time.Duration
 }
 
 // TCPPortCheck checks if a tcp port is open
-func TCPPortCheck(host string, port string) (bool, error) {
-	conn, err := net.DialTimeout("tcp", net.JoinHostPort(host, port), time.Second*2)
+func (tr *TCPResult) TCPPortCheck() (bool, error) {
+	tr.Start = time.Now()
+	conn, err := net.DialTimeout("tcp", net.JoinHostPort(tr.Host, tr.Port), tr.Timeout)
+	tr.End = time.Now()
+	tr.Duration = tr.End.Sub(tr.Start)
 	if err != nil {
 		return false, err
 	}
