@@ -3,7 +3,6 @@ package libtower
 import (
 	"context"
 	"errors"
-	"fmt"
 	"net"
 	"net/http/httptrace"
 	"time"
@@ -49,8 +48,6 @@ func DNSLookupFrom(addr string, server string) (*net.IPAddr, time.Duration, erro
 
 	client := dns.Client{Net: "udp"}
 	resp, rtt, err := client.Exchange(&msg, serverAddress)
-
-	fmt.Println(resp, rtt, err)
 
 	if err != nil {
 		return new(net.IPAddr), rtt, errors.New("dns exchange error: " + err.Error())
