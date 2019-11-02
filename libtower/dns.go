@@ -25,10 +25,10 @@ func DNSLookup(addr string) (*net.IPAddr, time.Duration, error) {
 	ctx := httptrace.WithClientTrace(context.Background(), traceDNS)
 	ips, err := (&net.Resolver{}).LookupIPAddr(ctx, addr)
 	if err != nil {
-		return new(net.IPAddr), DNS, err
+		return nil, 0, err
 	}
 	if len(ips) == 0 {
-		return new(net.IPAddr), DNS, errors.New("ips len is zero")
+		return nil, 0, errors.New("ips len is zero")
 	}
 	return &ips[0], DNS, nil
 }
@@ -37,7 +37,7 @@ func DNSLookup(addr string) (*net.IPAddr, time.Duration, error) {
 func DNSLookupFrom(addr string, server string) (*net.IPAddr, time.Duration, error) {
 	severIP := net.ParseIP(server)
 	if severIP == nil {
-		return new(net.IPAddr), time.Duration(0), errors.New("failed to parse server ip address")
+		return new(net.IPAddr), 0, errors.New("failed to parse server ip address")
 	}
 	serverAddress := server + ":53"
 
@@ -50,13 +50,13 @@ func DNSLookupFrom(addr string, server string) (*net.IPAddr, time.Duration, erro
 	resp, rtt, err := client.Exchange(&msg, serverAddress)
 
 	if err != nil {
-		return new(net.IPAddr), rtt, errors.New("dns exchange error: " + err.Error())
+		return nil, 0, errors.New("dns exchange error: " + err.Error())
 	}
 	if resp == nil {
-		return new(net.IPAddr), rtt, errors.New("response is nil")
+		return nil, 0, errors.New("response is nil")
 	}
 	if resp != nil && resp.Rcode != dns.RcodeSuccess {
-		return new(net.IPAddr), rtt, errors.New(dns.RcodeToString[resp.Rcode])
+		return nil, 0, errors.New(dns.RcodeToString[resp.Rcode])
 	}
 	for _, record := range resp.Answer {
 		if t, ok := record.(*dns.A); ok {
@@ -64,5 +64,5 @@ func DNSLookupFrom(addr string, server string) (*net.IPAddr, time.Duration, erro
 			return &ipAddress, rtt, nil
 		}
 	}
-	return new(net.IPAddr), rtt, errors.New("record a not find in response")
+	return nil, 0, errors.New("record a not find in response")
 }
