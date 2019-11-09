@@ -1,1 +1,10 @@
 package libtower
+
+import "time"
+
+// Time type
+type Time struct {
+	Start    time.Time
+	End      time.Time
+	Duration time.Duration
+}
