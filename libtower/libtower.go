@@ -8,3 +8,6 @@ type Time struct {
 	End      time.Time
 	Duration time.Duration
 }
+
+// Timeout type
+type Timeout time.Duration
