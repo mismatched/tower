@@ -2,13 +2,13 @@ package libtower
 
 import (
 	"net"
+	"net/url"
 	"time"
 )
 
-// TCPResult type
-type TCPResult struct {
-	Host    string
-	Port    string
+// TCP type
+type TCP struct {
+	URL     *url.URL
 	Timeout time.Duration
 
 	Start    time.Time
@@ -17,9 +17,9 @@ type TCPResult struct {
 }
 
 // TCPPortCheck checks if a tcp port is open
-func (tr *TCPResult) TCPPortCheck() (bool, error) {
+func (tr *TCP) TCPPortCheck() (bool, error) {
 	tr.Start = time.Now()
-	conn, err := net.DialTimeout("tcp", net.JoinHostPort(tr.Host, tr.Port), tr.Timeout)
+	conn, err := net.DialTimeout("tcp", tr.URL.Host, tr.Timeout)
 	tr.End = time.Now()
 	tr.Duration = tr.End.Sub(tr.Start)
 	if err != nil {
