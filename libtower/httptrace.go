@@ -8,7 +8,7 @@ import (
 )
 
 // Trace http
-func (ht *HTTPTrace) Trace(url, method string) error {
+func (ht *HTTPTrace) Trace() error {
 	// res := HTTPTrace{URL: url, Method: method}
 
 	req, err := http.NewRequest(ht.Method, ht.URL, nil)
