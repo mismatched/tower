@@ -7,24 +7,13 @@ import (
 	"time"
 )
 
-// HTTPTraceResult type
-type HTTPTraceResult struct {
-	URL                  string
-	Method               string
-	DNS                  time.Duration
-	TLSHandshake         time.Duration
-	Connect              time.Duration
-	GotFirstResponseByte time.Duration
-	Total                time.Duration
-}
+// Trace http
+func (ht *HTTPTrace) Trace(url, method string) error {
+	// res := HTTPTrace{URL: url, Method: method}
 
-// HTTPTrace check
-func HTTPTrace(url, method string) (HTTPTraceResult, error) {
-	res := HTTPTraceResult{URL: url, Method: method}
-
-	req, err := http.NewRequest(res.Method, res.URL, nil)
+	req, err := http.NewRequest(ht.Method, ht.URL, nil)
 	if err != nil {
-		return res, err
+		return err
 	}
 
 	var start, connect, dns, tlsHandshake time.Time
@@ -32,30 +21,30 @@ func HTTPTrace(url, method string) (HTTPTraceResult, error) {
 	trace := &httptrace.ClientTrace{
 		DNSStart: func(dsi httptrace.DNSStartInfo) { dns = time.Now() },
 		DNSDone: func(ddi httptrace.DNSDoneInfo) {
-			res.DNS = time.Since(dns)
+			ht.DNS = time.Since(dns)
 		},
 
 		TLSHandshakeStart: func() { tlsHandshake = time.Now() },
 		TLSHandshakeDone: func(cs tls.ConnectionState, err error) {
-			res.TLSHandshake = time.Since(tlsHandshake)
+			ht.TLSHandshake = time.Since(tlsHandshake)
 		},
 
 		ConnectStart: func(network, addr string) { connect = time.Now() },
 		ConnectDone: func(network, addr string, err error) {
-			res.Connect = time.Since(connect)
+			ht.Connect = time.Since(connect)
 		},
 
 		GotFirstResponseByte: func() {
-			res.Connect = time.Since(start)
+			ht.Connect = time.Since(start)
 		},
 	}
 
 	req = req.WithContext(httptrace.WithClientTrace(req.Context(), trace))
 	start = time.Now()
 	if _, err := http.DefaultTransport.RoundTrip(req); err != nil {
-		return res, err
+		return err
 	}
-	res.Total = time.Since(start)
+	ht.Total = time.Since(start)
 
-	return res, nil
+	return nil
 }
