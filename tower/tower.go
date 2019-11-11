@@ -76,7 +76,8 @@ func ActionHandler(c *cli.Context) error {
 	} else if c.String("trace") != "" {
 		// TODO: get http method from user
 		// TODO: use http:// schema if for urls with no schemas
-		r, err := libtower.HTTPTrace(c.String("trace"), "GET")
+		r := libtower.HTTPTrace{URL: c.String("trace"), Method: "GET"}
+		err := r.Trace()
 		if err != nil {
 			fmt.Printf("Error: %v\n", err)
 			return err
