@@ -98,13 +98,13 @@ func ActionHandler(c *cli.Context) error {
 		}
 		return nil
 	} else if c.String("http-status") != "" {
-		client := libtower.HTTPClient{}
-		r, err := client.HTTPStatus(c.String("http-status"), "GET")
+		client := libtower.HTTP{URL: c.String("http-status"), Method: "GET"}
+		err := client.HTTPStatus()
 		if err != nil {
 			fmt2.Printlnf("Error: %v\n", err)
 			return err
 		}
-		fmt2.Printlnf("%s with status %s code %d in %v", c.String("http-status"), r.Status, r.StatusCode, r.Duration)
+		fmt2.Printlnf("%s with status %s code %d in %v", c.String("http-status"), client.Status, client.StatusCode, client.Duration)
 		return nil
 	} else {
 		fmt.Println("Command not found in Tower")
