@@ -5,15 +5,11 @@ import (
 	"time"
 )
 
-// HTTPClient type
-type HTTPClient struct {
-	Timeout time.Duration
-}
-
-// HTTPStatusResult type
-type HTTPStatusResult struct {
-	URL    string
-	Method string
+// HTTP type
+type HTTP struct {
+	URL     string
+	Method  string
+	Timeout Timeout
 
 	Status           string // e.g. "200 OK"
 	StatusCode       int
@@ -30,24 +26,21 @@ type HTTPStatusResult struct {
 
 	// TODO: add tls fields
 
-	Start    time.Time
-	End      time.Time
-	Duration time.Duration
+	Time
 }
 
 // HTTPStatus check
-func (hc *HTTPClient) HTTPStatus(url, method string) (HTTPStatusResult, error) {
+func (hsr *HTTP) HTTPStatus() error {
 	// setup client
-	hsr := HTTPStatusResult{}
 	client := &http.Client{}
-	req, err := http.NewRequest(method, url, nil)
+	req, err := http.NewRequest(hsr.Method, hsr.URL, nil)
 	if err != nil {
-		return hsr, err
+		return err
 	}
 	hsr.Start = time.Now()
 	resp, err := client.Do(req)
 	if err != nil {
-		return hsr, err
+		return err
 	}
 	hsr.End = time.Now()
 
@@ -57,5 +50,5 @@ func (hc *HTTPClient) HTTPStatus(url, method string) (HTTPStatusResult, error) {
 	hsr.Status, hsr.Proto, hsr.ProtoMajor, hsr.ProtoMinor, hsr.Header, hsr.ContentLength, hsr.TransferEncoding, hsr.Close, hsr.Uncompressed, hsr.Trailer =
 		resp.Status, resp.Proto, resp.ProtoMajor, resp.ProtoMinor, resp.Header, resp.ContentLength, resp.TransferEncoding, resp.Close, resp.Uncompressed, resp.Trailer
 
-	return hsr, err
+	return err
 }
