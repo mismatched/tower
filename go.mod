@@ -7,4 +7,5 @@ require (
 	github.com/miekg/dns v1.1.22
 	github.com/urfave/cli v1.22.1
 	golang.org/x/net v0.0.0-20191007182048-72f939374954
+	gopkg.in/yaml.v2 v2.2.2
 )
