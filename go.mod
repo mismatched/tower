@@ -1,4 +1,4 @@
-module github.com/dariubs/tower
+module github.com/mismatched/tower
 
 go 1.12
 
