@@ -1,6 +1,6 @@
 package config
 
-import "github.com/mismatched/tower/libtower"
+import "github.com/mismatched/libtower"
 
 // TCP config type
 type TCP struct {
