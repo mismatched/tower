@@ -233,24 +233,25 @@ The action fails if any check has `"OK": false`.
 
 ## Claude Code Skills
 
-Tower ships with Claude Code skills for the CLI, MCP server, Go library, and GitHub Actions templates. Add as a plugin source:
+Tower ships with Claude Code skills for the CLI, MCP server, Go library, and GitHub Actions templates.
 
-```json
-{
-  "plugins": {
-    "tower-skills": {
-      "source": "https://github.com/mismatched/tower"
-    }
-  }
-}
+### Install
+
+```bash
+# Add the tower marketplace
+claude plugin marketplace add github.com/mismatched/tower
+
+# Install skills
+claude plugin install tower        # CLI + libtower + tower-template skills
+claude plugin install tower-mcp    # MCP server setup
 ```
 
-Installed skills:
+### Available plugins
 
-| Plugin | Skills |
-|--------|--------|
-| `tower` | `tower-cli`, `libtower`, `tower-template` |
-| `tower-mcp` | `tower-cli` (MCP server setup) |
+| Plugin | Skills | Description |
+|--------|--------|-------------|
+| `tower` | `tower-cli`, `libtower`, `tower-template` | CLI usage, Go library reference, GitHub Actions templates |
+| `tower-mcp` | `tower-cli` (MCP section) | MCP server config + 9 tools reference |
 
 ## License
 
