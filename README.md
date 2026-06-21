@@ -87,6 +87,12 @@ tower ws ws://example.com:8080/ws --timeout 10s
 tower check config.yml
 ```
 
+#### serve — MCP server (stdio)
+
+```bash
+tower serve
+```
+
 ## Config File
 
 ```yaml
@@ -124,6 +130,29 @@ Every command prints a single JSON object (or array for `check`):
   "Error": null
 }
 ```
+
+## MCP Server
+
+Tower includes a built-in MCP server over stdio. 9 tools, zero SDK dependencies.
+
+```bash
+tower serve
+```
+
+Configure in `.mcp.json`:
+
+```json
+{
+  "mcpServers": {
+    "tower": {
+      "command": "tower",
+      "args": ["serve"]
+    }
+  }
+}
+```
+
+Or install from the **[tower skills marketplace](#claude-code-skills)**.
 
 ## Build
 
@@ -201,6 +230,27 @@ steps:
 | `version` | Tower version to install (default: `latest`) |
 
 The action fails if any check has `"OK": false`.
+
+## Claude Code Skills
+
+Tower ships with Claude Code skills for the CLI, MCP server, Go library, and GitHub Actions templates. Add as a plugin source:
+
+```json
+{
+  "plugins": {
+    "tower-skills": {
+      "source": "https://github.com/mismatched/tower"
+    }
+  }
+}
+```
+
+Installed skills:
+
+| Plugin | Skills |
+|--------|--------|
+| `tower` | `tower-cli`, `libtower`, `tower-template` |
+| `tower-mcp` | `tower-cli` (MCP server setup) |
 
 ## License
 
