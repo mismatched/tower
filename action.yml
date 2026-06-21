@@ -1,0 +1,82 @@
+name: 'Tower Health Check'
+description: 'Run network health checks with tower (non-root, no ping)'
+branding:
+  icon: 'activity'
+  color: 'blue'
+
+inputs:
+  config:
+    description: 'Path to tower config YAML file'
+    required: false
+  tcp:
+    description: 'TCP host:port to check'
+    required: false
+  http:
+    description: 'HTTP URL to check'
+    required: false
+  https:
+    description: 'HTTPS host to check TLS cert'
+    required: false
+  dns:
+    description: 'Address to resolve'
+    required: false
+  ws:
+    description: 'WebSocket URL to check'
+    required: false
+  timeout:
+    description: 'Default timeout duration'
+    default: '10s'
+  version:
+    description: 'Tower version to install'
+    default: 'latest'
+
+outputs:
+  result:
+    description: 'JSON result from tower checks'
+    value: ${{ steps.checks.outputs.result }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup Go
+      uses: actions/setup-go@v5
+      with:
+        go-version: '1.24'
+
+    - name: Install tower
+      run: go install github.com/mismatched/tower@${{ inputs.version }}
+      shell: bash
+
+    - name: Run checks
+      id: checks
+      shell: bash
+      run: |
+        RESULTS=""
+        if [ -n "${{ inputs.config }}" ]; then
+          RESULTS=$(tower check "${{ inputs.config }}")
+        fi
+        if [ -n "${{ inputs.tcp }}" ]; then
+          R=$(tower tcp "${{ inputs.tcp }}" --timeout "${{ inputs.timeout }}")
+          RESULTS=$(echo "$RESULTS" | jq -c ". + [$R]")
+        fi
+        if [ -n "${{ inputs.http }}" ]; then
+          R=$(tower http "${{ inputs.http }}" --timeout "${{ inputs.timeout }}")
+          RESULTS=$(echo "$RESULTS" | jq -c ". + [$R]")
+        fi
+        if [ -n "${{ inputs.https }}" ]; then
+          R=$(tower https "${{ inputs.https }}" --timeout "${{ inputs.timeout }}")
+          RESULTS=$(echo "$RESULTS" | jq -c ". + [$R]")
+        fi
+        if [ -n "${{ inputs.dns }}" ]; then
+          R=$(tower dns "${{ inputs.dns }}" --timeout "${{ inputs.timeout }}")
+          RESULTS=$(echo "$RESULTS" | jq -c ". + [$R]")
+        fi
+        if [ -n "${{ inputs.ws }}" ]; then
+          R=$(tower ws "${{ inputs.ws }}" --timeout "${{ inputs.timeout }}")
+          RESULTS=$(echo "$RESULTS" | jq -c ". + [$R]")
+        fi
+        echo "result<<EOF" >> "$GITHUB_OUTPUT"
+        echo "$RESULTS" >> "$GITHUB_OUTPUT"
+        echo "EOF" >> "$GITHUB_OUTPUT"
+        # Fail if any check failed
+        echo "$RESULTS" | jq -e 'all(.OK)' > /dev/null

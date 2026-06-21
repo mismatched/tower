@@ -1,7 +1,10 @@
 package config
 
+import "github.com/mismatched/libtower"
+
 // PING config type
 type PING struct {
-	Host  string `yaml:"ip"`   // IPv4 or IPv6
-	Count int    `yaml:"port"` // Number of pings
+	Host    string           `yaml:"host"`    // IPv4 or IPv6
+	Count   int              `yaml:"count"`   // Number of pings
+	Timeout libtower.Timeout `yaml:"timeout"` // Timeout
 }
