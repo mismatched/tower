@@ -172,6 +172,12 @@ func main() {
 				ArgsUsage: "<config.yml>",
 				Action:    checkAction,
 			},
+			{
+				Name:   "serve",
+				Usage:  "run MCP server over stdio",
+				Action: serveAction,
+				Hidden: true,
+			},
 		},
 	}
 
@@ -371,6 +377,11 @@ func checkAction(ctx context.Context, cmd *cli.Command) error {
 		results = append(results, runCheck(ctx, c))
 	}
 	return json.NewEncoder(cmd.Writer).Encode(results)
+}
+
+// serveAction runs the MCP stdio server.
+func serveAction(ctx context.Context, cmd *cli.Command) error {
+	return runServe()
 }
 
 // runCheck dispatches a CheckConfig to the appropriate libtower check.

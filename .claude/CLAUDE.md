@@ -7,22 +7,24 @@ Tower is a CLI network health-check tool built on `github.com/mismatched/libtowe
 ## Commands
 
 ```bash
-go build -o bin/tower .          # Build
-go vet ./...                     # Vet
-go test -v ./...                 # Test (non-root)
-sudo go test -v -race ./...      # Test (root, includes ping)
-./bin/tower --help               # Show help
+go build -o bin/tower .                  # Build CLI
+go build -o bin/tower-mcp ./cmd/tower-mcp  # Build MCP server
+go vet ./...                             # Vet
+go test -v ./...                         # Test (non-root)
+sudo go test -v -race ./...              # Test (root, includes ping)
+./bin/tower --help                       # Show help
 ```
 
 ## Architecture
 
 ```
-tower.go           → CLI entry point, 9 subcommands, signal handling
-tower_test.go      → Tests for config parsing and CLI behavior
-config/config.go   → YAML config parser (flat list with type discriminator)
-config/ping.go     → PING config type
-config/tcp.go      → TCP config type
-util/method.go     → HTTP method normalization
+tower.go              → CLI entry point, 9 subcommands, signal handling
+tower_test.go         → Tests for config parsing and CLI behavior
+cmd/tower-mcp/main.go → MCP server (9 tools = 9 libtower checks)
+config/config.go      → YAML config parser (flat list with type discriminator)
+config/ping.go        → PING config type
+config/tcp.go         → TCP config type
+util/method.go        → HTTP method normalization
 ```
 
 ## Conventions
