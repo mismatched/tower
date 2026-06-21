@@ -1,0 +1,32 @@
+{
+  "name": "tower-skills",
+  "owner": {
+    "name": "Hasan Aminfar",
+    "email": "aminfar69@gmail.com"
+  },
+  "metadata": {
+    "description": "Tower network health check skills — CLI, MCP server, and Go library",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "tower",
+      "description": "Tower CLI for network health checks (ping, dns, tcp, tls, http, trace, https, ws) and Go library reference",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/tower-cli",
+        "./skills/libtower"
+      ]
+    },
+    {
+      "name": "tower-mcp",
+      "description": "Tower MCP server — run network health checks from Claude Code via stdio (9 tools, zero SDK deps)",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/tower-cli"
+      ]
+    }
+  ]
+}
