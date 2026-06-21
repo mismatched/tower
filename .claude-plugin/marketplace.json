@@ -16,7 +16,8 @@
       "strict": false,
       "skills": [
         "./skills/tower-cli",
-        "./skills/libtower"
+        "./skills/libtower",
+        "./skills/tower-template"
       ]
     },
     {
